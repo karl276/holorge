@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Montre avec Date et Jour/Mois</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      margin: 0;
+      background-color: black;
+    }
+
+    .clock {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      border: 10px solid red;
+      border-radius: 50%;
+      background-color: black;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 12px;
+      height: 12px;
+      background-color: black;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .hour, .minute, .second {
+      position: absolute;
+      bottom: 50%;
+      left: 50%;
+      transform-origin: bottom;
+      transition: all 0.05s ease;
+    }
+
+    .hour {
+      width: 6px;
+      height: 50px;
+      background-color: aqua;
+    }
+
+    .minute {
+      width: 4px;
+      height: 60px;
+      background-color: yellow;
+    }
+
+    .second {
+      width: 2px;
+      height: 70px;
+      background-color: red;
+    }
+
+    .digital-clock {
+      text-align: center;
+      font-family: 'Arial', sans-serif;
+      font-size: 24px;
+      margin-top: 20px;
+      font-weight: bold;
+      color: yellow;
+    }
+
+    .date {
+      text-align: center;
+      font-family: 'Arial', sans-serif;
+      font-size: 18px;
+      color: yellow;
+      margin-bottom: 10px;
+    }
+
+    .day-of-week, .month {
+      text-align: center;
+      font-family: 'Arial', sans-serif;
+      font-size: 18px;
+      color: aqua;
+    }
+
+    /* Style pour les chiffres */
+    .number {
+      position: absolute;
+      color: white;
+      font-size: 18px;
+      font-family: Arial, sans-serif;
+      font-weight: bold;
+      transform: translate(-50%, -50%);
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Affichage du jour de la semaine -->
+  <div class="day-of-week" id="dayOfWeek">Lundi</div>
+
+  <!-- Affichage du mois -->
+  <div class="month" id="month">Janvier</div>
+
+  <!-- Affichage de la date -->
+  <div class="date" id="dateDisplay">00/00/0000</div>
+
+  <div class="clock">
+    <div class="center"></div>
+    <div class="hour" id="hour"></div>
+    <div class="minute" id="minute"></div>
+    <div class="second" id="second"></div>
+
+    <!-- Les chiffres seront générés ici -->
+  </div>
+
+  <!-- Affichage numérique -->
+  <div class="digital-clock" id="digitalClock">00:00:00</div>
+
+  <script>
+    function updateClock() {
+      const hourElem = document.getElementById("hour");
+      const minuteElem = document.getElementById("minute");
+      const secondElem = document.getElementById("second");
+
+      const now = new Date();
+
+      const hours = now.getHours() % 12; // Convertir en format 12 heures
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+
+      // Calculer les angles de rotation pour chaque aiguille
+      const hourDeg = (hours + minutes / 60) * 30;
+      const minuteDeg = (minutes + seconds / 60) * 6;
+      const secondDeg = seconds * 6;
+
+      // Appliquer la rotation aux aiguilles
+      hourElem.style.transform = `rotate(${hourDeg}deg)`;
+      minuteElem.style.transform = `rotate(${minuteDeg}deg)`;
+      secondElem.style.transform = `rotate(${secondDeg}deg)`;
+
+      // Mettre à jour l'affichage numérique
+      const formattedHours = hours < 10 ? "0" + hours : hours;
+      const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+      const formattedSeconds = seconds < 10 ? "0" + seconds : seconds;
+
+      const digitalTime = `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+      document.getElementById("digitalClock").textContent = digitalTime;
+
+      // Afficher la date au format jj/mm/aaaa
+      const day = now.getDate();
+      const month = now.getMonth(); // Mois (de 0 à 11)
+      const year = now.getFullYear();
+
+      // Afficher le jour de la semaine
+      const daysOfWeek = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+      const dayOfWeek = daysOfWeek[now.getDay()];
+      document.getElementById("dayOfWeek").textContent = dayOfWeek;
+
+      // Afficher le mois
+      const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+      const currentMonth = months[month];
+      document.getElementById("month").textContent = currentMonth;
+
+      // Afficher la date au format jj/mm/aaaa
+      const formattedDate = `${day < 10 ? '0' + day : day}/${month + 1 < 10 ? '0' + (month + 1) : (month + 1)}/${year}`;
+      document.getElementById("dateDisplay").textContent = formattedDate;
+    }
+
+    function addNumbers() {
+      const clock = document.querySelector('.clock');
+      const radius = 90; // Rayon du cadran (moitié de 200px)
+      const centerX = 100; // Centre de l'horloge (x)
+      const centerY = 100; // Centre de l'horloge (y)
+
+      for (let i = 1; i <= 12; i++) {
+        const angle = (i * 30) * (Math.PI / 180); // Convertir l'angle en radians (30° pour chaque chiffre)
+        const x = centerX + radius * Math.sin(angle); // Position x basée sur l'angle
+        const y = centerY - radius * Math.cos(angle); // Position y basée sur l'angle
+
+        const number = document.createElement('div');
+        number.classList.add('number');
+        number.style.left = `${x}px`;
+        number.style.top = `${y}px`;
+        number.textContent = i;
+        clock.appendChild(number);
+      }
+    }
+
+    addNumbers(); // Ajouter les chiffres sur le cadran
+    setInterval(updateClock, 1000); // Mise à jour toutes les secondes
+
+    // Initialiser l'horloge dès le début
+    updateClock();
+  </script>
+
+</body>
+</html>
