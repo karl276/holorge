@@ -1,0 +1,287 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Pong vs IA - Version FUN+</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: white;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+    canvas {
+      border: 2px solid white;
+      background-color: #111;
+      z-index: 2;
+    }
+    button {
+      margin-bottom: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #333;
+      color: white;
+      border: 1px solid white;
+      cursor: pointer;
+      z-index: 3;
+    }
+    #dateHeure {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 18px;
+      color: aqua;
+      z-index: 3;
+    }
+    #slogan {
+      position: absolute;
+      font-size: 80px;
+      font-weight: bold;
+      color: rgba(255, 255, 255, 0.03);
+      transform: rotate(-20deg);
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 1;
+    }
+    #defile {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      background: #111;
+      border-top: 1px solid #444;
+      z-index: 3;
+    }
+    #defile span {
+      display: inline-block;
+      padding-left: 100%;
+      animation: defilement 15s linear infinite;
+      font-size: 20px;
+      color: #0f0;
+    }
+    @keyframes defilement {
+      from { transform: translateX(0); }
+      to { transform: translateX(-100%); }
+    }
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      opacity: 0.8;
+      animation: twinkle 2s infinite ease-in-out alternate;
+    }
+    @keyframes twinkle {
+      0% { opacity: 0.2; }
+      100% { opacity: 1; }
+    }
+    #intro {
+      position: absolute;
+      font-size: 100px;
+      color: white;
+      z-index: 4;
+      background: rgba(0,0,0,0.8);
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #chances {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 18px;
+      color: orange;
+      z-index: 3;
+    }
+  </style>
+</head>
+<body>
+
+<div class="stars" id="starsContainer"></div>
+<div id="slogan"><u>...reste tranquille !!!</u></div>
+<div id="dateHeure"></div>
+<div id="chances">Chances : 5</div>
+<div id="intro">3</div>
+
+<button id="startBtn" style="display:none;">Démarrer le jeu</button>
+<button id="superSpeedBtn" style="display:none;">Mode Super Speed</button>
+<canvas id="pong" width="800" height="500"></canvas>
+
+<div id="defile"><span>Bienvenue dans notre mini-jeu ! Servez, tapez, gagnez — et amusez-vous bien ! 🕹️</span></div>
+
+<audio id="bounceSound" src="https://www.soundjay.com/button/sounds/button-16.mp3" preload="auto"></audio>
+<audio id="bgMusic" src="https://www.bensound.com/bensound-music/bensound-summer.mp3" preload="auto" loop></audio>
+
+<script>
+  const starsContainer = document.getElementById("starsContainer");
+  for (let i = 0; i < 100; i++) {
+    let star = document.createElement("div");
+    star.classList.add("star");
+    star.style.top = Math.random() * 100 + "%";
+    star.style.left = Math.random() * 100 + "%";
+    starsContainer.appendChild(star);
+  }
+
+  const intro = document.getElementById("intro");
+  const startBtn = document.getElementById("startBtn");
+  const superSpeedBtn = document.getElementById("superSpeedBtn");
+  const bgMusic = document.getElementById("bgMusic");
+
+  let countdown = 3;
+  const countdownInterval = setInterval(() => {
+    countdown--;
+    if (countdown === 0) {
+      intro.textContent = "GO!";
+    } else if (countdown < 0) {
+      clearInterval(countdownInterval);
+      intro.style.display = "none";
+      startBtn.style.display = 'block';
+      superSpeedBtn.style.display = 'block';
+    } else {
+      intro.textContent = countdown;
+    }
+  }, 1000);
+
+  function afficherDateHeure() {
+    const jours = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+    const mois = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+                  "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+    const now = new Date();
+    const texte = jours[now.getDay()] + " " + now.getDate() + " " +
+                  mois[now.getMonth()] + " " + now.getFullYear() + " — " +
+                  now.toLocaleTimeString();
+    document.getElementById("dateHeure").textContent = texte;
+  }
+  setInterval(afficherDateHeure, 1000);
+  afficherDateHeure();
+
+  const canvas = document.getElementById('pong');
+  const ctx = canvas.getContext('2d');
+  const bounceSound = document.getElementById('bounceSound');
+  const paddleWidth = 10, paddleHeight = 100;
+  const ballSize = 20;
+  let chances = 5;
+  const chancesEl = document.getElementById("chances");
+
+  const player = { x: 10, y: 200, score: 0 };
+  const ia = { x: 780, y: 200, score: 0 };
+  const ball = { x: 400, y: 250, vx: 2, vy: 2, color: getRandomColor(), speedIncreaseCounter: 0 };
+  const keys = {};
+  document.addEventListener('keydown', e => keys[e.key] = true);
+  document.addEventListener('keyup', e => keys[e.key] = false);
+  let gameStarted = false;
+
+  function getRandomColor() {
+    const colors = ['#ff4040', '#40ff40', '#4040ff', '#ffff40', '#ff40ff', '#40ffff', '#ffffff'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  function drawRect(x, y, w, h, color) {
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, w, h);
+  }
+  function drawBall() {
+    ctx.fillStyle = ball.color;
+    ctx.fillRect(ball.x, ball.y, ballSize, ballSize);
+  }
+  function drawScores() {
+    ctx.font = "30px monospace";
+    ctx.fillStyle = "white";
+    ctx.fillText(player.score, 300, 40);
+    ctx.fillText(ia.score, 480, 40);
+  }
+  function playBounce() {
+    bounceSound.currentTime = 0;
+    bounceSound.play();
+  }
+  function resetBall() {
+    ball.x = 400;
+    ball.y = 250;
+    ball.vx = (Math.random() > 0.5 ? 1 : -1) * 2;
+    ball.vy = (Math.random() > 0.5 ? 1 : -1) * 2;
+    ball.color = getRandomColor();
+    ball.speedIncreaseCounter = 0;
+  }
+  function increaseSpeed() {
+    if (Math.abs(ball.vx) < 12) {
+      ball.vx *= 1.1;
+      ball.vy *= 1.1;
+    }
+  }
+  function update() {
+    if (!gameStarted) return;
+    if (keys['a'] && player.y > 0) player.y -= 5;
+    if (keys['w'] && player.y < canvas.height - paddleHeight) player.y += 5;
+    if (ball.vx > 0) {
+      if (ball.y < ia.y + paddleHeight / 2 && ia.y > 0) ia.y -= 3;
+      else if (ball.y > ia.y + paddleHeight / 2 && ia.y < canvas.height - paddleHeight) ia.y += 3;
+    }
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+
+    if (ball.y <= 0 || ball.y + ballSize >= canvas.height) {
+      ball.vy *= -1; ball.color = getRandomColor(); playBounce(); ball.speedIncreaseCounter++;
+    }
+    if (ball.x <= player.x + paddleWidth && ball.y + ballSize >= player.y && ball.y <= player.y + paddleHeight) {
+      ball.vx *= -1; ball.color = getRandomColor(); playBounce(); ball.speedIncreaseCounter++;
+    }
+    if (ball.x + ballSize >= ia.x && ball.y + ballSize >= ia.y && ball.y <= ia.y + paddleHeight) {
+      ball.vx *= -1; ball.color = getRandomColor(); playBounce(); ball.speedIncreaseCounter++;
+    }
+    if (ball.x < 0) {
+      ia.score++; chances--; chancesEl.textContent = "Chances : " + chances;
+      if (chances <= 0) { alert("Tu t’es fait éclater par l’IA ! Essaie encore 😅"); location.reload(); }
+      resetBall();
+    } else if (ball.x > canvas.width) {
+      player.score++; resetBall();
+    }
+    if (ball.speedIncreaseCounter >= 5) { increaseSpeed(); ball.speedIncreaseCounter = 0; }
+  }
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawRect(player.x, player.y, paddleWidth, paddleHeight, 'white');
+    drawRect(ia.x, ia.y, paddleWidth, paddleHeight, 'white');
+    drawBall();
+    drawScores();
+  }
+  function gameLoop() {
+    draw();
+    update();
+    requestAnimationFrame(gameLoop);
+  }
+
+  startBtn.addEventListener('click', () => {
+    gameStarted = true;
+    startBtn.style.display = 'none';
+    bgMusic.play();
+    bounceSound.play();
+  });
+  superSpeedBtn.addEventListener('click', () => {
+    ball.vx *= 3;
+    ball.vy *= 3;
+    alert("⚡ MODE SUPER SPEED ACTIVÉ ⚡");
+  });
+
+  gameLoop();
+</script>
+</body>
+</html>
