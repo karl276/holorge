@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Blessings Page</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+    }
+
+    #stars {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, #111 0%, black 100%);
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 2s infinite ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
+    }
+
+    #content {
+      position: absolute;
+      top: 20%;
+      width: 90%;
+      margin: auto;
+      left: 5%;
+      text-align: center;
+      font-size: 24px;
+      z-index: 1;
+    }
+
+    .word {
+      display: inline-block;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      margin-right: 5px;
+    }
+
+    #magicBtn {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 24px;
+      background: #fff;
+      color: #000;
+      border-radius: 25px;
+      cursor: pointer;
+      z-index: 2;
+      font-size: 18px;
+      box-shadow: 0 0 10px #fff;
+    }
+  </style>
+</head>
+<body>
+  <div id="stars"></div>
+  <div id="content"></div>
+  <div id="magicBtn">✨ Launch Blessings ✨</div>
+  <audio id="bgMusic" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2023/03/05/audio_326c73fc7f.mp3?filename=healing-143245.mp3" type="audio/mp3">
+  </audio>
+
+  <script>
+    // Générer des étoiles
+    for (let i = 0; i < 100; i++) {
+      let star = document.createElement('div');
+      star.className = 'star';
+      star.style.top = `${Math.random() * 100}%`;
+      star.style.left = `${Math.random() * 100}%`;
+      star.style.animationDuration = `${1 + Math.random() * 2}s`;
+      document.getElementById('stars').appendChild(star);
+    }
+
+    // Les bénédictions
+    const blessings = [
+      `by the divin power celeste of the name of elohim bless the minds of my mother now and to the end`,
+      `by the divin power celeste of the name of elohim bless the spirit of my mother now and to the end`,
+      `by the divin power celeste of the name of elohim bless the soul of my mother now and to the end`,
+      `by the divin power celeste of the name of elohim bless the words of the mouth of my mother now and to the end`,
+      `by the divin power celeste of the name of elohim bless the ways of my mother with eternal love and peace now and to the end`,
+      `by the divin power celeste of the name of elohim bless the life of my mother with eternal love and peace now and to the end`,
+      `by the divin power celeste of the name of elohim bless the minds of all my childrens now and to the end`,
+      `by the divin power celeste of the name of elohim bless the spirit of all my childrens now and to the end`,
+      `by the divin power celeste of the name of elohim bless the soul of all my childrens now and to the end`,
+      `by the divin power celeste of the name of elohim bless the life of all my childrens with eternal love and peace now and to the end`,
+      `by the divin power of heavenly host bless my life with your eternal love and peace now and to the end`,
+      `by the divin power of heavenly host bless the life of all my childrens with your eternal love and peace now and to the end`,
+      `by the divin power of the name of God of Jacob destroy those who persecute me now and to the end`,
+      `by the divin power of Archangel st michael destroy those who persecute me now and to the end`,
+      `by the divin power celeste of the name of adonay bless the house of my mother with eternal love and peace now and to the end`
+    ];
+
+    const contentDiv = document.getElementById('content');
+    const synth = window.speechSynthesis;
+    let selectedVoice = null;
+
+    // Obtenir la voix anglaise
+    function loadVoices() {
+      const voices = synth.getVoices();
+      selectedVoice = voices.find(v => v.lang.includes('en') && v.name.toLowerCase().includes('english'));
+    }
+
+    speechSynthesis.onvoiceschanged = loadVoices;
+
+    function speakAndAnimate(text) {
+      if (synth.speaking) synth.cancel();
+
+      contentDiv.innerHTML = '';
+      const words = text.split(' ');
+      words.forEach((word, i) => {
+        const span = document.createElement('span');
+        span.className = 'word';
+        span.textContent = word;
+        contentDiv.appendChild(span);
+        setTimeout(() => {
+          span.style.opacity = 1;
+        }, i * 400);
+      });
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.voice = selectedVoice;
+      utterance.lang = 'en-GB';
+      utterance.rate = 0.9;
+      synth.speak(utterance);
+    }
+
+    function launchBlessings() {
+      const music = document.getElementById('bgMusic');
+      music.play().catch(() => {}); // navigateur peut bloquer si pas interaction
+      let i = 0;
+
+      function next() {
+        if (i < blessings.length) {
+          speakAndAnimate(blessings[i]);
+          i++;
+          setTimeout(next, 4000 + blessings[i - 1].split(' ').length * 400);
+        }
+      }
+
+      next();
+    }
+
+    document.getElementById('magicBtn').addEventListener('click', launchBlessings);
+    document.addEventListener('keydown', launchBlessings); // touche clavier
+  </script>
+</body>
+</html>

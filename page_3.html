@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Horloge Stylée</title>
+  <style>
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top center, #1a1a1a, #000);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      overflow: hidden;
+    }
+    .container {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .time {
+      font-size: 6em;
+      display: flex;
+      gap: 10px;
+      animation: pulse 2s infinite ease-in-out;
+      cursor: pointer;
+    }
+    .date {
+      margin-top: 20px;
+      font-size: 2em;
+      animation: typing 4s steps(30, end);
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 2px solid white;
+    }
+    @keyframes pulse {
+      0%, 100% { text-shadow: 0 0 10px #ff4081, 0 0 20px #ff4081; }
+      50% { text-shadow: 0 0 20px #40c4ff, 0 0 30px #40c4ff; }
+    }
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    canvas#stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stars"></canvas>
+  <div class="container">
+    <div class="time" id="clock">00:00:00</div>
+    <div class="date" id="date">Chargement...</div>
+  </div>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+
+      const days = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+      const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+      const dateStr = `${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+      document.getElementById('date').textContent = dateStr;
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // VOIX chaque heure
+    let lastHourAnnounced = null;
+    function speakHour(hour) {
+      const msg = new SpeechSynthesisUtterance(`Il est ${hour} heure${hour > 1 ? 's' : ''}`);
+      msg.lang = 'fr-FR';
+      window.speechSynthesis.speak(msg);
+    }
+
+    function autoSpeakHour() {
+      const now = new Date();
+      const hour = now.getHours();
+      if (now.getMinutes() === 0 && now.getSeconds() === 0 && hour !== lastHourAnnounced) {
+        speakHour(hour);
+        lastHourAnnounced = hour;
+      }
+    }
+    setInterval(autoSpeakHour, 1000);
+
+    // VOIX au clic
+    document.getElementById('clock').addEventListener('click', () => {
+      const now = new Date();
+      speakHour(now.getHours());
+    });
+
+    // STARS BACKGROUND
+    const canvas = document.getElementById('stars');
+    const ctx = canvas.getContext('2d');
+    const stars = [];
+    const numStars = 200;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    for (let i = 0; i < numStars; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 1.5,
+        dx: (Math.random() - 0.5) * 0.5,
+        dy: (Math.random() - 0.5) * 0.5
+      });
+    }
+
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'white';
+      stars.forEach(star => {
+        star.x += star.dx;
+        star.y += star.dy;
+
+        if (star.x < 0 || star.x > canvas.width) star.dx *= -1;
+        if (star.y < 0 || star.y > canvas.height) star.dy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      requestAnimationFrame(animateStars);
+    }
+    animateStars();
+  </script>
+</body>
+</html>

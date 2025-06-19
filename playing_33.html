@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Playlist Interactive - 60 Titres</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #eee;
+    }
+    a {
+      color: #1a0dab;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.8);
+    }
+    .modal-content {
+      position: relative;
+      margin: 5% auto;
+      padding: 0;
+      width: 80%;
+      max-width: 800px;
+    }
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 25px;
+      color: #fff;
+      font-size: 35px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    iframe {
+      width: 100%;
+      height: 450px;
+    }
+    .next-btn {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .next-btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🎵 Playlist Interactive - 60 Titres</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Genre</th>
+      <th>Titre</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- RAP -->
+    <tr><td>Rap</td><td>Eminem - Lose Yourself</td><td><a href="#" onclick="playVideo('https://www.youtube.com/watch?v=_Yhyp-_hX2s')">Écouter</a></td></tr>
+    <tr><td>Rap</td><td>Tupac - Changes</td><td><a href="#" onclick="playVideo('https://www.youtube.com/watch?v=eXvBjCO19QY')">Écouter</a></td></tr>
+    <tr><td>Rap</td><td>Dr. Dre - Still D.R.E.</td><td><a href="#" onclick="playVideo('https://www.youtube.com/watch?v=_CL6n0FJZpk')">Écouter</a></td></tr>
+    <tr><td>Rap</td><td>Kanye West - Stronger</td><td><a href="#" onclick="playVideo('https://www.youtube.com/watch?v=PsO6ZnUZI0g')">Écouter</a></td></tr>
+    <tr><td>Rap</td><td>Kendrick Lamar - HUMBLE.</td><td><a href="#" onclick="playVideo('https://www.youtube.com/watch?v=tvTRZJ-4EyI')">Écouter</a></td></tr>
+    <tr><td>Rap</td><td>Jay-Z - 99 Problems</td><td><a href="#" onclick="playVideo('https://www.youtube.com/watch?v=WwoM5fLITfk')">Écouter</a></td></tr>
+    <tr><td>Rap</td><td>Notorious B.I.G. - Juicy</td><td><a href="#" onclick="playVideo('https://www.youtube.com/watch?v=_JZom_gVfuw')">Écouter</a></td></tr>
+    <tr><td>Rap</td><td>Travis Scott - SICKO MODE</td><td><a href="#" onclick="playVideo('https://www.youtube.com/watch?v=6ONRf7h3Mdk')">Écouter</a></td></tr>
+    <tr><td>Rap</td><td>Post Malone - Rockstar</td><td><a href="#" onclick="playVideo('https://www.youtube.com/watch?v=UceaB4D0jpo')">Écouter</a></td></tr>
+    <tr><td>Rap</td><td>Cardi B - Bodak Yellow</td><td><a href="#" onclick="playVideo('https://www.youtube.com/watch?v=PEGccV-NOm8')">Écouter</a></td></tr>
+
+    <!-- R&B -->
+    <tr><td>R&B</td><td>Alicia Keys - Fallin'</td><td><a href="#" onclick="playVideo('https://www.youtube.com/watch?v=Urdlvw0SSEc')">Écouter</a></td></tr>
+    <tr><td>R&B</td><td>Usher - Yeah!</td><td><a href="#" onclick="playVideo('https://www.youtube.com/watch?v=GxBSyx85Kp8')">Écouter</a></td></tr>
+    <tr><td>R&B</td><td>Rihanna - We Found Love</td><td><a href="#" onclick="playVideo('https://www.youtube.com/watch?v=tg00YEETFzg')">Écouter</a></td></tr>
+    <tr><td>R&B</td><td>Ne-Yo - So Sick</td><td><a href="#" onclick="playVideo('https://www.youtube.com/watch?v=cefZ8xZ2I2A')">Écouter</a></td></tr>
+    <tr><td>R&B</td><td>Beyoncé - Halo</td><td><a href="#" onclick="playVideo('https://www.youtube.com/watch?v=bnVUHWCynig')">Écouter</a></td></tr>
+    <tr><td>R&B</td><td>Chris Brown - With You</td><td><a href="#" onclick="playVideo('https://www.youtube.com/watch?v=nmjdaBaZe8Y')">Écouter</a></td></tr>
+    <tr><td>R&B</td><td>Mary J. Blige - Be Without You</td><td><a href="#" onclick="playVideo('https://www.youtube.com/watch?v=RkWQDDv_qdg')">Écouter</a></td></tr>
+    <tr><td>R&B</td><td>Bruno Mars - Versace on the Floor</td><td><a href="#" onclick="playVideo('https://www.youtube.com/watch?v=-FyjEnoIgTM')">Écouter</a></td></tr>
+    <tr><td>R&B</td><td>Frank Ocean - Thinkin Bout You</td><td><a href="#" onclick="playVideo('https://www.youtube.com/watch?v=pNBD-MB45Tg')">Écouter</a></td></tr>
+
+    <!-- Ajouter ici les autres genres (Techno, Zouk, Jazz, Slow) jusqu'à atteindre 60 titres -->
+  </tbody>
+</table>
+
+<!-- Modal -->
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <iframe id="videoFrame" src="" frameborder="0" allowfullscreen></iframe>
+    <button class="next-btn" onclick="nextVideo()">Vidéo suivante</button>
+  </div>
+</div>
+
+<script>
+  var videoUrls = [
+    'https://www.youtube.com/watch?v=_Yhyp-_hX2s', // Eminem - Lose Yourself
+    'https://www.youtube.com/watch?v=eXvBjCO19QY', // Tupac - Changes
+    'https://www.youtube.com/watch?v=_CL6n0FJZpk', // Dr. Dre - Still D.R.E.
+    'https://www.youtube.com/watch?v=PsO6ZnUZI0g', // Kanye West - Stronger
+    'https://www.youtube.com/watch?v=tvTRZJ-4EyI', // Kendrick Lamar - HUMBLE.
+    'https://www.youtube.com/watch?v=WwoM5fLITfk', // Jay-Z - 99 Problems
+    'https://www.youtube.com/watch?v=_JZom_gVfuw', // Notorious B.I.G. - Juicy
+    'https://www.youtube.com/watch?v=6ONRf7h3Mdk', // Travis Scott - SICKO MODE
+    'https://www.youtube.com/watch?v=UceaB4D0jpo', // Post Malone - Rockstar
+    'https://www.youtube.com/watch?v=PEGccV-NOm8', // Cardi B - Bodak Yellow
+    // Ajouter ici les autres vidéos pour la playlist complète...
+  ];
+  
+  var currentVideoIndex = 0;
+
+  function playVideo(url) {
+    document.getElementById("videoFrame").src = url + "?autoplay=1";
+    document.getElementById("myModal").style.display = "block";
+  }
+
+  function closeModal() {
+    document.getElementById("videoFrame").src = "";
+    document.getElementById("myModal").style.display = "none";
+  }
+
+  function nextVideo() {
+    currentVideoIndex++;
+    if (currentVideoIndex >= videoUrls.length) {
+      currentVideoIndex = 0;  // Recommencer la playlist
+    }
+    document.getElementById("videoFrame").src = videoUrls[currentVideoIndex] + "?autoplay=1";
+  }
+
+  // Fermer le modal en cliquant en dehors de la vidéo
+  window.onclick = function(event) {
+    var modal = document.getElementById("myModal");
+    if (event.target == modal) {
+      closeModal();
+    }
+  }
+</script>
+
+</body>
+</html>

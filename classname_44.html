@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Éditeur CSS avec Catégories</title>
+  <style id="dynamic-style">
+    .style1 {
+      color: red;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .style2 {
+      color: blue;
+      font-size: 30px;
+      font-style: italic;
+    }
+    .style3 {
+      color: green;
+      font-size: 28px;
+      text-decoration: underline;
+    }
+  </style>
+  <style id="dynamic-keyframes">
+    @keyframes clignote {
+      0% { opacity: 1; }
+      50% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+  </style>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+      display: flex;
+      flex-wrap: wrap;
+    }
+    textarea {
+      width: 100%;
+      height: 200px;
+      font-family: monospace;
+      margin-bottom: 10px;
+    }
+    .left, .right {
+      flex: 1;
+      min-width: 300px;
+      padding: 10px;
+    }
+    button {
+      margin: 5px 5px 10px 0;
+      padding: 10px;
+      font-size: 16px;
+    }
+    .preview {
+      padding: 20px;
+      border: 1px dashed #ccc;
+      margin: 10px 0;
+    }
+
+    details {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin: 10px 0;
+      padding: 8px;
+      background: #f9f9f9;
+    }
+
+    summary {
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .suggestion {
+      background: #f0f0f0;
+      margin: 4px 0;
+      padding: 6px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .suggestion:hover {
+      background: #d0eaff;
+    }
+  </style>
+</head>
+<body>
+<!-- [Le début du code reste inchangé jusqu'à la balise <div class="right suggestions">] -->
+
+  <div class="right suggestions">
+    <h2>📚 Boîte à outils CSS</h2>
+
+    <details open>
+      <summary>🧍 Textes</summary>
+      <div class="suggestion" onclick="ajouterCSS('font-family: Arial, sans-serif;')">font-family: Arial</div>
+      <div class="suggestion" onclick="ajouterCSS('font-size: 20px;')">font-size: 20px</div>
+      <div class="suggestion" onclick="ajouterCSS('text-transform: uppercase;')">text-transform: uppercase</div>
+      <div class="suggestion" onclick="ajouterCSS('letter-spacing: 2px;')">letter-spacing: 2px</div>
+      <div class="suggestion" onclick="ajouterCSS('line-height: 1.5;')">line-height: 1.5</div>
+    </details>
+
+    <details>
+      <summary>📦 Boîtes & Conteneurs</summary>
+      <div class="suggestion" onclick="ajouterCSS('padding: 10px;')">padding: 10px</div>
+      <div class="suggestion" onclick="ajouterCSS('margin: 10px auto;')">margin: 10px auto</div>
+      <div class="suggestion" onclick="ajouterCSS('width: 80%;')">width: 80%</div>
+      <div class="suggestion" onclick="ajouterCSS('height: 150px;')">height: 150px</div>
+      <div class="suggestion" onclick="ajouterCSS('display: flex; justify-content: center; align-items: center;')">flex center</div>
+    </details>
+
+    <details>
+      <summary>🖼️ Effets Visuels</summary>
+      <div class="suggestion" onclick="ajouterCSS('opacity: 0.5;')">opacity: 0.5</div>
+      <div class="suggestion" onclick="ajouterCSS('filter: blur(3px);')">blur(3px)</div>
+      <div class="suggestion" onclick="ajouterCSS('filter: grayscale(100%);')">grayscale</div>
+      <div class="suggestion" onclick="ajouterCSS('mix-blend-mode: multiply;')">blend: multiply</div>
+    </details>
+
+    <details>
+      <summary>🎨 Couleurs & Dégradés</summary>
+      <div class="suggestion" onclick="ajouterCSS('background-color: #ffcccc;')">bg: rose pâle</div>
+      <div class="suggestion" onclick="ajouterCSS('background: linear-gradient(to right, red, orange);')">dégradé horizontal</div>
+      <div class="suggestion" onclick="ajouterCSS('color: white; background: black;')">inversion texte/fond</div>
+    </details>
+
+    <details>
+      <summary>🔲 Bordures & Ombres</summary>
+      <div class="suggestion" onclick="ajouterCSS('border: 2px solid black;')">bordure noire</div>
+      <div class="suggestion" onclick="ajouterCSS('border-radius: 12px;')">coins arrondis</div>
+      <div class="suggestion" onclick="ajouterCSS('box-shadow: 2px 2px 10px rgba(0,0,0,0.3);')">ombre douce</div>
+    </details>
+
+    <details>
+      <summary>🎞️ Transitions & Animations</summary>
+      <div class="suggestion" onclick="ajouterCSS('transition: all 0.3s ease;')">transition douce</div>
+      <div class="suggestion" onclick="ajouterCSS('animation: fadeIn 2s ease-in-out;')">animation: fadeIn</div>
+      <div class="suggestion" onclick="ajouterKeyframes(`@keyframes slideLeft {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(0); }
+}`)">@keyframes slideLeft</div>
+    </details>
+
+    <!-- Les anciennes catégories "Propriétés CSS" et "Animations @keyframes" peuvent être supprimées ou gardées -->
+  </div>
+
+  <div class="left">
+    <h1>Éditeur CSS Dynamique</h1>
+    <p id="texte" class="preview">elohim destroy those who persecute me now and to the end </p>
+    <div>
+      <button onclick="changerClasse('style1')">Style 1</button>
+      <button onclick="changerClasse('style2')">Style 2</button>
+      <button onclick="changerClasse('style3')">Style 3</button>
+      <button onclick="reset()">Réinitialiser</button>
+    </div>
+
+    <h2>Zone CSS :</h2>
+    <textarea id="styleArea" oninput="majStyle()">
+.style1 {
+  color: red;
+  font-size: 24px;
+  font-weight: bold;
+}
+.style2 {
+  color: blue;
+  font-size: 30px;
+  font-style: italic;
+}
+.style3 {
+  color: green;
+  font-size: 28px;
+  text-decoration: underline;
+}
+    </textarea>
+
+    <h2>Zone @keyframes :</h2>
+    <textarea id="keyframeArea" oninput="majKeyframes()">
+@keyframes clignote {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+    </textarea>
+  </div>
+
+  <div class="right suggestions">
+    <h2>📚 Boîte à outils CSS</h2>
+
+    <details open>
+      <summary>🎨 Propriétés CSS courantes</summary>
+      <div class="suggestion" onclick="ajouterCSS('color: red;')">color: red;</div>
+      <div class="suggestion" onclick="ajouterCSS('font-size: 24px;')">font-size: 24px;</div>
+      <div class="suggestion" onclick="ajouterCSS('text-align: center;')">text-align: center;</div>
+      <div class="suggestion" onclick="ajouterCSS('animation: clignote 2s infinite;')">animation: clignote 2s infinite;</div>
+    </details>
+
+    <details>
+      <summary>✨ Exemples d’animations @keyframes</summary>
+      <div class="suggestion" onclick="ajouterKeyframes(`@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}`)">fadeIn</div>
+
+      <div class="suggestion" onclick="ajouterKeyframes(`@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-30px); }
+}`)">bounce</div>
+
+      <div class="suggestion" onclick="ajouterKeyframes(`@keyframes rotate360 {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}`)">rotate360</div>
+
+      <div class="suggestion" onclick="ajouterKeyframes(`@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}`)">shake</div>
+    </details>
+
+    <details>
+      <summary>⚙️ Effets avancés (à venir)</summary>
+      <div class="suggestion" onclick="ajouterCSS('transition: all 0.5s ease;')">transition: all 0.5s ease;</div>
+      <div class="suggestion" onclick="ajouterCSS('transform: scale(1.2);')">transform: scale(1.2);</div>
+      <div class="suggestion" onclick="ajouterKeyframes(`@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}`)">pulse</div>
+    </details>
+  </div>
+
+  <script>
+    const texte = document.getElementById('texte');
+    const styleTag = document.getElementById('dynamic-style');
+    const keyframeTag = document.getElementById('dynamic-keyframes');
+
+    function changerClasse(nouvelleClasse) {
+      texte.className = 'preview';
+      texte.classList.add(nouvelleClasse);
+    }
+
+    function reset() {
+      texte.className = 'preview';
+    }
+
+    function majStyle() {
+      styleTag.textContent = document.getElementById('styleArea').value;
+    }
+
+    function majKeyframes() {
+      keyframeTag.textContent = document.getElementById('keyframeArea').value;
+    }
+
+    function ajouterCSS(ligne) {
+      const textarea = document.getElementById('styleArea');
+      textarea.value += '\n' + ligne;
+      majStyle();
+    }
+
+    function ajouterKeyframes(code) {
+      const textarea = document.getElementById('keyframeArea');
+      textarea.value += '\n\n' + code;
+      majKeyframes();
+    }
+  </script>
+</body>
+</html>
