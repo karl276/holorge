@@ -1,0 +1,23 @@
+<html><head><title></title>
+<style>
+
+</style>
+
+</head><body>
+<div id="result" ></div>
+<script>
+let clock = document.createElement('div');
+clock.style.fontSize = "80px";
+clock.style.marginTop = "20px";
+clock.style.color = "#0f0";
+clock.style.background= "black";
+document.getElementById('result').appendChild(clock);
+function updateClock(){
+  let now = new Date();
+  clock.innerText = now.toLocaleTimeString();
+}
+updateClock();
+setInterval(updateClock, 1000);
+</script>
+
+</body></html>
